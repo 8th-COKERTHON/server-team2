@@ -25,6 +25,6 @@ public class AuthDto {
 			Long id,
 			String loginId,
 			String nickname,
-			int totalScore
+			Integer totalScore
 	) {}
 }
