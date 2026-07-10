@@ -26,4 +26,24 @@ public class NotificationDto {
 			String message,
 			LocalDateTime sentAt
 	) {}
+
+	public record NotificationGenerationResponse(
+			int processedBookmarkCount,
+			int createdNotificationCount,
+			List<CreatedNotificationResponse> notifications,
+			String message
+	) {}
+
+	public record CreatedNotificationResponse(
+			Long notificationId,
+			Long bookmarkId,
+			String bookmarkTitle,
+			int notificationCount,
+			int reminderLevel,
+			String title,
+			String message,
+			int incompleteChecklistCount,
+			LocalDateTime nextReminderAt,
+			LocalDateTime createdAt
+	) {}
 }

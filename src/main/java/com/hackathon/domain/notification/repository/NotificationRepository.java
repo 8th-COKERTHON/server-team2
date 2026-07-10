@@ -19,4 +19,6 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
 			order by n.createdAt desc, n.id desc
 			""")
 	List<Notification> findNotificationHistory(@Param("memberId") Long memberId);
+
+	long countByBookmark_Id(Long bookmarkId);
 }

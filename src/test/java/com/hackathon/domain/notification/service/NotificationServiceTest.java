@@ -112,7 +112,6 @@ class NotificationServiceTest {
 
 	private Bookmark createBookmark(Long bookmarkId, Long memberId, String title, int viewCount) {
 		Member member = Member.builder()
-				.username("yepot")
 				.loginId("yepot")
 				.password("encoded-password")
 				.nickname("은서")

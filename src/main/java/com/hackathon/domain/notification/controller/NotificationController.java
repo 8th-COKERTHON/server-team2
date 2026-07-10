@@ -1,6 +1,8 @@
 package com.hackathon.domain.notification.controller;
 
+import com.hackathon.domain.notification.dto.NotificationDto.NotificationGenerationResponse;
 import com.hackathon.domain.notification.dto.NotificationDto.NotificationHistoryResponse;
+import com.hackathon.domain.notification.service.NotificationProcessingService;
 import com.hackathon.domain.notification.service.NotificationService;
 import com.hackathon.global.exception.CustomException;
 import com.hackathon.global.exception.ErrorCode;
@@ -10,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class NotificationController {
 
 	private final NotificationService notificationService;
+	private final NotificationProcessingService notificationProcessingService;
 
 	@GetMapping
 	@Operation(summary = "알림 내역 조회")
@@ -27,6 +31,15 @@ public class NotificationController {
 			@AuthenticationPrincipal Long memberId
 	) {
 		return ResponseEntity.ok(notificationService.getNotifications(requireMemberId(memberId)));
+	}
+
+	@PostMapping
+	@Operation(summary = "리마인드 알림 생성")
+	public ResponseEntity<NotificationGenerationResponse> generateNotifications(
+			@AuthenticationPrincipal Long memberId
+	) {
+		requireMemberId(memberId);
+		return ResponseEntity.ok(notificationProcessingService.generateDueNotifications());
 	}
 
 	private Long requireMemberId(Long memberId) {
