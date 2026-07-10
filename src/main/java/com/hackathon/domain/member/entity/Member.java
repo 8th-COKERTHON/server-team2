@@ -33,8 +33,7 @@ public class Member extends BaseEntity {
 	private Integer totalScore;
 
 	@Builder
-	public Member(String username, String loginId, String password, String nickname, Integer totalScore) {
-		this.username = username;
+	public Member( String loginId, String password, String nickname, Integer totalScore) {
 		this.loginId = loginId;
 		this.password = password;
 		this.nickname = nickname;

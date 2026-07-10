@@ -43,11 +43,11 @@ public class AuthController {
 		return ApiResponse.onSuccess(GeneralSuccessCode.OK, authService.getMyInfo(memberId));
 	}
 
-	@PostMapping("/logout")
-	@Operation(summary = "로그아웃")
-	public ApiResponse<Void> logout() {
-		return ApiResponse.onSuccess(GeneralSuccessCode.OK, null);
-	}
+//	@PostMapping("/logout")
+//	@Operation(summary = "로그아웃")
+//	public ApiResponse<Void> logout() {
+//		return ApiResponse.onSuccess(GeneralSuccessCode.OK, null);
+//	}
 
 	@DeleteMapping("/withdraw")
 	@Operation(summary = "회원탈퇴")
