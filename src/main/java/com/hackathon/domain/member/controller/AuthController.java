@@ -30,8 +30,10 @@ public class AuthController {
 	}
 
 	@PostMapping("/login")
-	@Operation(summary = "로그인", description = "이메일/비밀번호로 로그인 후 access/refresh 토큰 발급")
+	@Operation(summary = "로그인", description = "아이디/비밀번호로 로그인 후 access/refresh 토큰 발급")
 	public ResponseEntity<TokenResponse> login(@Valid @RequestBody LoginRequest request) {
 		return ResponseEntity.ok(authService.login(request));
 	}
+
+	@PostMapping("/")
 }
