@@ -1,6 +1,7 @@
 package com.hackathon.domain.bookmark.entity;
 
 import com.hackathon.domain.member.entity.Member;
+import com.hackathon.global.entity.BaseEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,8 +12,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -28,7 +27,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "bookmark")
-public class Bookmark {
+public class Bookmark extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,17 +53,11 @@ public class Bookmark {
 	@Column(nullable = false)
 	private Boolean isActive;
 
-	@Column(nullable = false, updatable = false)
-	private LocalDateTime createdAt;
-
-	@Column(nullable = false)
-	private LocalDateTime updatedAt;
-
 	@OneToMany(mappedBy = "bookmark", cascade = CascadeType.ALL, orphanRemoval = true)
 	private final List<BookmarkTag> tags = new ArrayList<>();
 
 	@Builder
-	public Bookmark(Member memberId, String url, String title, LocalDateTime remindAt) {
+	public Bookmark(Member memberId, String url, String title, String status, LocalDateTime remindAt) {
 		this.memberId = memberId;
 		this.url = url;
 		this.title = title;
@@ -73,23 +66,11 @@ public class Bookmark {
 		this.isActive = true;
 	}
 
-	@PrePersist
-	public void prePersist() {
-		LocalDateTime now = LocalDateTime.now();
-		this.createdAt = now;
-		this.updatedAt = now;
-	}
-
-	@PreUpdate
-	public void preUpdate() {
-		this.updatedAt = LocalDateTime.now();
-	}
-
 	public List<BookmarkTag> getTags() {
 		return Collections.unmodifiableList(tags);
 	}
 
-	public void update(String url, String title, LocalDateTime remindAt) {
+	public void update(String url, String title, String status, LocalDateTime remindAt) {
 		if (url != null) {
 			this.url = url;
 		}

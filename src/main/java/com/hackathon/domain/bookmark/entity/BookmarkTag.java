@@ -1,5 +1,6 @@
 package com.hackathon.domain.bookmark.entity;
 
+import com.hackathon.global.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -17,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "bookmark_tag")
-public class BookmarkTag {
+public class BookmarkTag extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,13 +26,13 @@ public class BookmarkTag {
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "bookmark_id", nullable = false)
-	private Bookmark bookmarkId;
+	private Bookmark bookmark;
 
 	@Column(nullable = false, length = 50)
 	private String name;
 
-	public BookmarkTag(Bookmark bookmarkId, String name) {
-		this.bookmarkId = bookmarkId;
+	public BookmarkTag(Bookmark bookmark, String name) {
+		this.bookmark = bookmark;
 		this.name = name;
 	}
 }
