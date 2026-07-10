@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
@@ -17,4 +18,14 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
 				and b.isActive = true
 			""")
 	Optional<Bookmark> findOwnedActiveBookmark(@Param("bookmarkId") Long bookmarkId, @Param("memberId") Long memberId);
+
+	@Query("""
+			select distinct b
+			from Bookmark b
+			left join fetch b.tags
+			where b.memberId.id = :memberId
+				and b.isActive = true
+			order by b.id desc
+			""")
+	List<Bookmark> findOwnedActiveBookmarks(@Param("memberId") Long memberId);
 }

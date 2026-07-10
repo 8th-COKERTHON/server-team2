@@ -1,10 +1,13 @@
 package com.hackathon.global.exception;
 
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 @RestControllerAdvice
@@ -18,7 +21,10 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public ResponseEntity<Map<String, String>> handleValidationException(MethodArgumentNotValidException e) {
+	public ResponseEntity<ErrorResponse> handleValidationException(
+			MethodArgumentNotValidException e,
+			HttpServletRequest request
+	) {
 		String message = e.getBindingResult().getFieldErrors().stream()
 				.findFirst()
 				.map(error -> error.getDefaultMessage() != null ? error.getDefaultMessage() : "잘못된 요청입니다.")
@@ -26,14 +32,21 @@ public class GlobalExceptionHandler {
 
 		return ResponseEntity
 				.badRequest()
-				.body(Map.of("message", message));
+				.body(ErrorResponse.of(HttpStatus.BAD_REQUEST, message, request.getRequestURI()));
 	}
 
 	@ExceptionHandler(IllegalArgumentException.class)
-	public ResponseEntity<Map<String, String>> handleIllegalArgumentException(IllegalArgumentException e) {
+	public ResponseEntity<ErrorResponse> handleIllegalArgumentException(
+			IllegalArgumentException e,
+			HttpServletRequest request
+	) {
 		return ResponseEntity
 				.badRequest()
-				.body(Map.of("message", e.getMessage() != null ? e.getMessage() : "잘못된 요청입니다."));
+				.body(ErrorResponse.of(
+						HttpStatus.BAD_REQUEST,
+						e.getMessage() != null ? e.getMessage() : "잘못된 요청입니다.",
+						request.getRequestURI()
+				));
 	}
 
 	@ExceptionHandler(Exception.class)
@@ -41,5 +54,23 @@ public class GlobalExceptionHandler {
 		return ResponseEntity
 				.internalServerError()
 				.body(Map.of("message", "서버 내부 오류: " + e.getMessage()));
+	}
+
+	public record ErrorResponse(
+			LocalDateTime timestamp,
+			int status,
+			String error,
+			String message,
+			String path
+	) {
+		public static ErrorResponse of(HttpStatus status, String message, String path) {
+			return new ErrorResponse(
+					LocalDateTime.now(),
+					status.value(),
+					status.getReasonPhrase(),
+					message,
+					path
+			);
+		}
 	}
 }

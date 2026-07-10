@@ -2,8 +2,11 @@ package com.hackathon.domain.bookmark.service;
 
 import com.hackathon.domain.bookmark.dto.BookmarkCreateDto.Request;
 import com.hackathon.domain.bookmark.dto.BookmarkCreateDto.Response;
+import com.hackathon.domain.bookmark.dto.BookmarkReadDto;
 import com.hackathon.domain.bookmark.entity.Bookmark;
 import com.hackathon.domain.bookmark.repository.BookmarkRepository;
+import com.hackathon.domain.checklist.entity.Checklist;
+import com.hackathon.domain.checklist.repository.ChecklistRepository;
 import com.hackathon.domain.member.entity.Member;
 import com.hackathon.domain.member.repository.MemberRepository;
 import com.hackathon.global.exception.CustomException;
@@ -14,6 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URI;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +29,7 @@ public class BookmarkService {
 	private static final int MAX_TAG_COUNT = 5;
 
 	private final BookmarkRepository bookmarkRepository;
+	private final ChecklistRepository checklistRepository;
 	private final MemberRepository memberRepository;
 
 	@Transactional
@@ -45,6 +52,22 @@ public class BookmarkService {
 		}
 
 		return Response.from(bookmarkRepository.save(bookmark));
+	}
+
+	public BookmarkReadDto.Response findAll(Long memberId) {
+		validateAuthenticatedMember(memberId);
+		List<Bookmark> bookmarks = bookmarkRepository.findOwnedActiveBookmarks(memberId);
+		List<Long> bookmarkIds = bookmarks.stream()
+				.map(Bookmark::getId)
+				.toList();
+		Map<Long, List<Checklist>> checklistsByBookmarkId = bookmarkIds.isEmpty()
+				? Map.of()
+				: checklistRepository.findByBookmark_IdInOrderByIdAsc(bookmarkIds).stream()
+						.collect(Collectors.groupingBy(checklist -> checklist.getBookmark().getId()));
+
+		return BookmarkReadDto.Response.of(bookmarks.stream()
+				.map(bookmark -> BookmarkReadDto.BookmarkResponse.of(bookmark, checklistsByBookmarkId))
+				.toList());
 	}
 
 	private void validateAuthenticatedMember(Long memberId) {
