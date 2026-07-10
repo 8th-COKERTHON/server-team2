@@ -1,5 +1,6 @@
 package com.hackathon.domain.member.service;
 
+import com.hackathon.domain.member.dto.AuthDto;
 import com.hackathon.domain.member.dto.AuthDto.LoginRequest;
 import com.hackathon.domain.member.dto.AuthDto.SignUpRequest;
 import com.hackathon.domain.member.dto.AuthDto.TokenResponse;
@@ -50,5 +51,11 @@ public class AuthService {
 		String refreshToken = jwtTokenProvider.createRefreshToken(member.getId());
 
 		return new TokenResponse(accessToken, refreshToken);
+	}
+
+	public AuthDto.MemberInfoResponse getMyInfo(Long memberId) {
+		Member member = memberRepository.findById(memberId)
+				.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+		return new AuthDto.MemberInfoResponse(member.getId(), member.getLoginId(), member.getNickname(), member.getTotalScore());
 	}
 }
