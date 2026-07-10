@@ -50,4 +50,13 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
 	);
 
 	void deleteAllByMemberId(Member member);
+
+	@Query("""
+			select distinct b
+			from Bookmark b
+			left join fetch b.tags
+			where b.id = :bookmarkId
+				and b.isActive = true
+			""")
+	Optional<Bookmark> findActiveBookmarkWithTags(@Param("bookmarkId") Long bookmarkId);
 }

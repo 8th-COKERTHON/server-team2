@@ -5,26 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b95dc68f-1c56-4651-b003-9c4f45012c76" name="변경" comment="">
-      <change beforePath="$PROJECT_DIR$/.gradle/9.0.0/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/9.0.0/checksums/checksums.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/9.0.0/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/9.0.0/executionHistory/executionHistory.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/9.0.0/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/9.0.0/executionHistory/executionHistory.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/9.0.0/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/9.0.0/fileHashes/fileHashes.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/9.0.0/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/9.0.0/fileHashes/fileHashes.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/9.0.0/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/9.0.0/fileHashes/resourceHashesCache.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/hackathon/domain/bookmark/controller/BookmarkController.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/hackathon/domain/bookmark/controller/BookmarkController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/hackathon/domain/bookmark/repository/BookmarkRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/hackathon/domain/bookmark/repository/BookmarkRepository.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/hackathon/domain/bookmark/service/BookmarkService.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/hackathon/domain/bookmark/service/BookmarkService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/hackathon/domain/checklist/repository/ChecklistRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/hackathon/domain/checklist/repository/ChecklistRepository.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/hackathon/global/config/SecurityConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/hackathon/global/config/SecurityConfig.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/hackathon/global/exception/GlobalExceptionHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/hackathon/global/exception/GlobalExceptionHandler.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/hackathon/domain/bookmark/controller/BookmarkController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/hackathon/domain/bookmark/controller/BookmarkController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/hackathon/domain/bookmark/dto/BookmarkReadDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/hackathon/domain/bookmark/dto/BookmarkReadDto.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/hackathon/domain/bookmark/repository/BookmarkRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/hackathon/domain/bookmark/repository/BookmarkRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/hackathon/domain/bookmark/service/BookmarkService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/hackathon/domain/bookmark/service/BookmarkService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/hackathon/domain/checklist/repository/ChecklistRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/hackathon/domain/checklist/repository/ChecklistRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/hackathon/global/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/hackathon/global/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/hackathon/global/exception/ErrorCode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/hackathon/global/exception/ErrorCode.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/hackathon/global/exception/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/hackathon/global/exception/GlobalExceptionHandler.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -36,6 +23,23 @@
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
     </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="hackathon-template" type="f1a62948:ProjectNode" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />

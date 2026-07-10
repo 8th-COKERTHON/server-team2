@@ -70,6 +70,19 @@ public class BookmarkService {
 				.toList());
 	}
 
+	public BookmarkReadDto.DetailResponse findOne(Long memberId, Long bookmarkId) {
+		validateAuthenticatedMember(memberId);
+		Bookmark bookmark = bookmarkRepository.findActiveBookmarkWithTags(bookmarkId)
+				.orElseThrow(() -> new CustomException(ErrorCode.BOOKMARK_NOT_FOUND));
+
+		if (!bookmark.getMemberId().getId().equals(memberId)) {
+			throw new CustomException(ErrorCode.FORBIDDEN_BOOKMARK_ACCESS);
+		}
+
+		List<Checklist> checklists = checklistRepository.findByBookmark_IdInOrderByIdAsc(List.of(bookmarkId));
+		return BookmarkReadDto.DetailResponse.of(bookmark, checklists);
+	}
+
 	private void validateAuthenticatedMember(Long memberId) {
 		if (memberId == null) {
 			throw new CustomException(ErrorCode.INVALID_TOKEN);

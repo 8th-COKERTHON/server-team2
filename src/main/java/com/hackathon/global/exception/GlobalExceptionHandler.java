@@ -14,10 +14,10 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
 	@ExceptionHandler(CustomException.class)
-	public ResponseEntity<Map<String, String>> handleCustomException(CustomException e) {
+	public ResponseEntity<ErrorResponse> handleCustomException(CustomException e, HttpServletRequest request) {
 		return ResponseEntity
 				.status(e.getErrorCode().getStatus())
-				.body(Map.of("message", e.getMessage()));
+				.body(ErrorResponse.of(e.getErrorCode().getStatus(), e.getMessage(), request.getRequestURI()));
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)

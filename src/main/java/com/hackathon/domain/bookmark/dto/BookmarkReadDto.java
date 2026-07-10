@@ -61,4 +61,30 @@ public class BookmarkReadDto {
 			);
 		}
 	}
+
+	public record DetailResponse(
+			Long bookmarkId,
+			String title,
+			String url,
+			java.time.LocalDateTime remindAt,
+			Integer totalScore,
+			List<TagResponse> tags,
+			List<ChecklistResponse> checklists
+	) {
+		public static DetailResponse of(Bookmark bookmark, List<Checklist> checklists) {
+			return new DetailResponse(
+					bookmark.getId(),
+					bookmark.getTitle(),
+					bookmark.getUrl(),
+					bookmark.getRemindAt(),
+					bookmark.getMemberId().getTotalScore(),
+					bookmark.getTags().stream()
+							.map(TagResponse::from)
+							.toList(),
+					checklists.stream()
+							.map(ChecklistResponse::from)
+							.toList()
+			);
+		}
+	}
 }
