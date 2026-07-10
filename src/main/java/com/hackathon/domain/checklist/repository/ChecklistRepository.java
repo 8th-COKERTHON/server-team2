@@ -1,0 +1,26 @@
+package com.hackathon.domain.checklist.repository;
+
+import com.hackathon.domain.checklist.entity.Checklist;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.util.Optional;
+
+public interface ChecklistRepository extends JpaRepository<Checklist, Long> {
+
+	@Query("""
+			select c
+			from Checklist c
+			join fetch c.bookmark b
+			where c.id = :checklistId
+				and b.id = :bookmarkId
+				and b.memberId.id = :memberId
+				and b.isActive = true
+			""")
+	Optional<Checklist> findOwnedChecklist(
+			@Param("checklistId") Long checklistId,
+			@Param("bookmarkId") Long bookmarkId,
+			@Param("memberId") Long memberId
+	);
+}
