@@ -21,7 +21,9 @@ public class BookmarkCreateDto {
 
 			LocalDateTime remindAt,
 
-			List<@NotBlank @Size(max = 50) String> tags
+			List<@NotBlank @Size(max = 50) String> tags,
+
+			List<@NotBlank @Size(max = 500) String> checklists
 	) {
 	}
 

@@ -8,8 +8,10 @@ import com.hackathon.domain.bookmark.dto.BookmarkUpdateDto;
 import com.hackathon.domain.bookmark.dto.BookmarkVisitDto;
 import com.hackathon.domain.bookmark.entity.Bookmark;
 import com.hackathon.domain.bookmark.repository.BookmarkRepository;
+import com.hackathon.domain.checklist.dto.ChecklistDto.CreateRequest;
 import com.hackathon.domain.checklist.entity.Checklist;
 import com.hackathon.domain.checklist.repository.ChecklistRepository;
+import com.hackathon.domain.checklist.service.ChecklistService;
 import com.hackathon.domain.member.entity.Member;
 import com.hackathon.domain.member.repository.MemberRepository;
 import com.hackathon.global.exception.CustomException;
@@ -30,9 +32,12 @@ import java.util.stream.Collectors;
 public class BookmarkService {
 
 	private static final int MAX_TAG_COUNT = 5;
+	private static final int MAX_CHECKLIST_COUNT = 5;
+	private static final String DEFAULT_CHECKLIST = "링크 열람하기";
 
 	private final BookmarkRepository bookmarkRepository;
 	private final ChecklistRepository checklistRepository;
+	private final ChecklistService checklistService;
 	private final MemberRepository memberRepository;
 
 	@Transactional
@@ -54,7 +59,10 @@ public class BookmarkService {
 			bookmark.replaceTags(request.tags());
 		}
 
-		return Response.from(bookmarkRepository.save(bookmark));
+		Bookmark savedBookmark = bookmarkRepository.saveAndFlush(bookmark);
+		createInitialChecklists(memberId, savedBookmark.getId(), request.checklists());
+
+		return Response.from(savedBookmark);
 	}
 
 	public BookmarkReadDto.Response findAll(Long memberId) {
@@ -151,12 +159,25 @@ public class BookmarkService {
 		if (request.tags() != null && request.tags().size() > MAX_TAG_COUNT) {
 			throw new IllegalArgumentException("해시태그는 최대 5개까지 등록할 수 있습니다.");
 		}
+		if (request.checklists() != null && request.checklists().size() > MAX_CHECKLIST_COUNT) {
+			throw new IllegalArgumentException("체크리스트는 최대 5개까지 등록할 수 있습니다.");
+		}
 		if (request.remindAt() != null && !request.remindAt().isAfter(LocalDateTime.now())) {
 			throw new IllegalArgumentException("리마인드 날짜는 현재 시각 이후로 설정해야 합니다.");
 		}
 		if (!isValidUrl(request.url())) {
 			throw new IllegalArgumentException("올바른 URL 형식이 아닙니다.");
 		}
+	}
+
+	private void createInitialChecklists(Long memberId, Long bookmarkId, List<String> checklists) {
+		List<String> checklistContents = checklists == null || checklists.isEmpty()
+				? List.of(DEFAULT_CHECKLIST)
+				: checklists;
+
+		checklistContents.forEach(content ->
+				checklistService.createChecklist(memberId, bookmarkId, new CreateRequest(content))
+		);
 	}
 
 	private void validateUpdateRequest(BookmarkUpdateDto.Request request) {

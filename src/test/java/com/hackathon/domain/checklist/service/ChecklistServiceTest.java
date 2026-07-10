@@ -94,6 +94,7 @@ class ChecklistServiceTest {
 		LocalDateTime previousUpdatedAt = LocalDateTime.now().minusMinutes(1);
 		ReflectionTestUtils.setField(checklist, "updatedAt", previousUpdatedAt);
 		given(checklistRepository.findOwnedChecklist(15L, 3L, 1L)).willReturn(Optional.of(checklist));
+		given(checklistRepository.existsByBookmark_IdAndCheckedFalse(3L)).willReturn(true);
 		doAnswer(invocation -> {
 			ReflectionTestUtils.invokeMethod(checklist, "onUpdate");
 			return null;
@@ -104,6 +105,20 @@ class ChecklistServiceTest {
 		assertThat(response.isChecked()).isTrue();
 		assertThat(response.updatedAt()).isAfter(previousUpdatedAt);
 		assertThat(checklist.isChecked()).isTrue();
+		assertThat(checklist.getBookmark().getIsActive()).isTrue();
+		verify(scoreService).awardChecklistChecked(checklist);
+	}
+
+	@Test
+	void toggleChecklistDeactivatesBookmarkWhenAllChecklistsAreCompleted() {
+		Checklist checklist = createChecklist(15L, 3L, 1L, false);
+		given(checklistRepository.findOwnedChecklist(15L, 3L, 1L)).willReturn(Optional.of(checklist));
+		given(checklistRepository.existsByBookmark_IdAndCheckedFalse(3L)).willReturn(false);
+
+		checklistService.toggleChecklist(1L, 3L, 15L);
+
+		assertThat(checklist.isChecked()).isTrue();
+		assertThat(checklist.getBookmark().getIsActive()).isFalse();
 		verify(scoreService).awardChecklistChecked(checklist);
 	}
 
