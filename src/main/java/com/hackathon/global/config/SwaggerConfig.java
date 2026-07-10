@@ -5,8 +5,10 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import org.springdoc.core.customizers.ServerBaseUrlCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Configuration
 public class SwaggerConfig {
@@ -25,5 +27,20 @@ public class SwaggerConfig {
 						.version("v1"))
 				.components(new Components().addSecuritySchemes("bearerAuth", bearerScheme))
 				.addSecurityItem(new SecurityRequirement().addList("bearerAuth"));
+	}
+
+	@Bean
+	public ServerBaseUrlCustomizer serverBaseUrlCustomizer() {
+		return (baseUrl, request) -> {
+			String host = request.getHeaders().getHost() != null ? request.getHeaders().getHost().getHostName() : null;
+			if (host == null || "localhost".equals(host) || "127.0.0.1".equals(host)) {
+				return baseUrl;
+			}
+
+			return UriComponentsBuilder.fromUriString(baseUrl)
+					.scheme("https")
+					.build()
+					.toUriString();
+		};
 	}
 }
