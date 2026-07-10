@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b95dc68f-1c56-4651-b003-9c4f45012c76" name="변경" comment="" />
+    <list default="true" id="b95dc68f-1c56-4651-b003-9c4f45012c76" name="변경" comment="">
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/hackathon/domain/checklist/repository/ChecklistRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/hackathon/domain/checklist/repository/ChecklistRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/hackathon/domain/notification/service/NotificationScheduler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/hackathon/domain/notification/service/NotificationScheduler.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
