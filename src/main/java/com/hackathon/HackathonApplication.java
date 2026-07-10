@@ -3,6 +3,7 @@ package com.hackathon;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+@EnableJpaAuditing
 @SpringBootApplication
 public class HackathonApplication {
 	public static void main(String[] args) {
