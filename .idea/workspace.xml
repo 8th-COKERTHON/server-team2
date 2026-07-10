@@ -6,6 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="b95dc68f-1c56-4651-b003-9c4f45012c76" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/hackathon/domain/bookmark/dto/BookmarkCreateDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/hackathon/domain/bookmark/dto/BookmarkCreateDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/hackathon/domain/bookmark/service/BookmarkService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/hackathon/domain/bookmark/service/BookmarkService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/hackathon/domain/checklist/service/ChecklistService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/hackathon/domain/checklist/service/ChecklistService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/hackathon/domain/bookmark/service/BookmarkServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/hackathon/domain/bookmark/service/BookmarkServiceTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/hackathon/domain/checklist/service/ChecklistServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/hackathon/domain/checklist/service/ChecklistServiceTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

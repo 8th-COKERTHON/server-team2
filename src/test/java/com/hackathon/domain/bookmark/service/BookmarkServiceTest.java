@@ -1,10 +1,14 @@
 package com.hackathon.domain.bookmark.service;
 
+import com.hackathon.domain.bookmark.dto.BookmarkCreateDto;
 import com.hackathon.domain.bookmark.dto.BookmarkReadDto;
+import com.hackathon.domain.bookmark.dto.BookmarkDeleteDto;
 import com.hackathon.domain.bookmark.entity.Bookmark;
 import com.hackathon.domain.bookmark.repository.BookmarkRepository;
+import com.hackathon.domain.checklist.dto.ChecklistDto.CreateRequest;
 import com.hackathon.domain.checklist.entity.Checklist;
 import com.hackathon.domain.checklist.repository.ChecklistRepository;
+import com.hackathon.domain.checklist.service.ChecklistService;
 import com.hackathon.domain.member.entity.Member;
 import com.hackathon.domain.member.repository.MemberRepository;
 import org.junit.jupiter.api.Test;
@@ -14,10 +18,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
@@ -31,10 +39,104 @@ class BookmarkServiceTest {
 	private ChecklistRepository checklistRepository;
 
 	@Mock
+	private ChecklistService checklistService;
+
+	@Mock
 	private MemberRepository memberRepository;
 
 	@InjectMocks
 	private BookmarkService bookmarkService;
+
+	@Test
+	void createAddsDefaultChecklistWhenRequestChecklistsAreEmpty() {
+		Member member = createMember(10L);
+		given(memberRepository.findById(10L)).willReturn(Optional.of(member));
+		given(bookmarkRepository.saveAndFlush(any(Bookmark.class))).willAnswer(invocation -> {
+			Bookmark bookmark = invocation.getArgument(0);
+			ReflectionTestUtils.setField(bookmark, "id", 1L);
+			ReflectionTestUtils.invokeMethod(bookmark, "onCreate");
+			return bookmark;
+		});
+
+		bookmarkService.create(
+				10L,
+				new BookmarkCreateDto.Request(
+						"Spring Boot 예외 처리 정리",
+						"https://example.com/spring-exception",
+						LocalDateTime.now().plusDays(1),
+						List.of("Spring"),
+						List.of()
+				)
+		);
+
+		verify(checklistService).createChecklist(eq(10L), eq(1L), eq(new CreateRequest("링크 열람하기")));
+	}
+
+	@Test
+	void createAddsRequestedChecklists() {
+		Member member = createMember(10L);
+		given(memberRepository.findById(10L)).willReturn(Optional.of(member));
+		given(bookmarkRepository.saveAndFlush(any(Bookmark.class))).willAnswer(invocation -> {
+			Bookmark bookmark = invocation.getArgument(0);
+			ReflectionTestUtils.setField(bookmark, "id", 1L);
+			ReflectionTestUtils.invokeMethod(bookmark, "onCreate");
+			return bookmark;
+		});
+
+		bookmarkService.create(
+				10L,
+				new BookmarkCreateDto.Request(
+						"Spring Boot 예외 처리 정리",
+						"https://example.com/spring-exception",
+						LocalDateTime.now().plusDays(1),
+						List.of("Spring"),
+						List.of("게시글 읽기", "예제 코드 실행하기")
+				)
+		);
+
+		verify(checklistService).createChecklist(eq(10L), eq(1L), eq(new CreateRequest("게시글 읽기")));
+		verify(checklistService).createChecklist(eq(10L), eq(1L), eq(new CreateRequest("예제 코드 실행하기")));
+	}
+
+	@Test
+	void createWithEmptyChecklistsCanBeReadWithDefaultChecklist() {
+		Member member = createMember(10L);
+		List<Bookmark> savedBookmarks = new ArrayList<>();
+		List<Checklist> savedChecklists = new ArrayList<>();
+		given(memberRepository.findById(10L)).willReturn(Optional.of(member));
+		given(bookmarkRepository.saveAndFlush(any(Bookmark.class))).willAnswer(invocation -> {
+			Bookmark bookmark = invocation.getArgument(0);
+			ReflectionTestUtils.setField(bookmark, "id", 1L);
+			ReflectionTestUtils.invokeMethod(bookmark, "onCreate");
+			savedBookmarks.add(bookmark);
+			return bookmark;
+		});
+		given(bookmarkRepository.findOwnedActiveBookmarks(10L)).willAnswer(invocation -> savedBookmarks);
+		given(checklistRepository.findByBookmarkId(1L)).willAnswer(invocation -> savedChecklists);
+		given(checklistService.createChecklist(eq(10L), eq(1L), eq(new CreateRequest("링크 열람하기"))))
+				.willAnswer(invocation -> {
+					Checklist checklist = createChecklist(11L, savedBookmarks.get(0), "링크 열람하기", false);
+					savedChecklists.add(checklist);
+					return null;
+				});
+
+		bookmarkService.create(
+				10L,
+				new BookmarkCreateDto.Request(
+						"Spring Boot 예외 처리 정리",
+						"https://example.com/spring-exception",
+						LocalDateTime.now().plusDays(1),
+						List.of("Spring"),
+						List.of()
+				)
+		);
+		BookmarkReadDto.Response response = bookmarkService.findAll(10L);
+
+		assertThat(response.bookmarks()).hasSize(1);
+		assertThat(response.bookmarks().get(0).checklists())
+				.extracting(BookmarkReadDto.ChecklistResponse::content)
+				.containsExactly("링크 열람하기");
+	}
 
 	@Test
 	void findAllReturnsChecklistsForEachBookmark() {
@@ -88,14 +190,22 @@ class BookmarkServiceTest {
 		verify(checklistRepository).findByBookmarkId(1L);
 	}
 
+	@Test
+	void deleteMarksRequestedBookmarkInactive() {
+		Bookmark bookmark = createBookmark(1L, 10L, "Spring Boot 예외 처리 정리");
+		given(bookmarkRepository.findById(1L)).willReturn(Optional.of(bookmark));
+
+		BookmarkDeleteDto.Response response = bookmarkService.delete(10L, 1L);
+
+		assertThat(response.bookmarkId()).isEqualTo(1L);
+		assertThat(response.message()).isEqualTo("북마크가 성공적으로 삭제되었습니다.");
+		assertThat(bookmark.getIsActive()).isFalse();
+		verify(bookmarkRepository).findById(1L);
+		verify(bookmarkRepository).flush();
+	}
+
 	private Bookmark createBookmark(Long bookmarkId, Long memberId, String title) {
-		Member member = Member.builder()
-				.loginId("yepot")
-				.password("encoded-password")
-				.nickname("은서")
-				.totalScore(0)
-				.build();
-		ReflectionTestUtils.setField(member, "id", memberId);
+		Member member = createMember(memberId);
 
 		Bookmark bookmark = Bookmark.builder()
 				.memberId(member)
@@ -107,6 +217,17 @@ class BookmarkServiceTest {
 		ReflectionTestUtils.setField(bookmark, "id", bookmarkId);
 
 		return bookmark;
+	}
+
+	private Member createMember(Long memberId) {
+		Member member = Member.builder()
+				.loginId("yepot")
+				.password("encoded-password")
+				.nickname("은서")
+				.totalScore(0)
+				.build();
+		ReflectionTestUtils.setField(member, "id", memberId);
+		return member;
 	}
 
 	private Checklist createChecklist(Long checklistId, Bookmark bookmark, String content, boolean checked) {
