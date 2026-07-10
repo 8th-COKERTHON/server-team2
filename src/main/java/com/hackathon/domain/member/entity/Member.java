@@ -1,5 +1,6 @@
 package com.hackathon.domain.member.entity;
 
+import com.hackathon.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -10,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "member")
-public class Member {
+public class Member extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,16 +20,24 @@ public class Member {
 	@Column(nullable = false, unique = true)
 	private String username;
 
+	@Column(name = "login_id", nullable = false, unique = true)
+	private String loginId;
+
 	@Column(nullable = false)
 	private String password;
 
 	@Column(nullable = false)
 	private String nickname;
 
+	@Column(name = "total_score", nullable = false)
+	private Integer totalScore;
+
 	@Builder
-	public Member(String username, String password, String nickname) {
+	public Member(String username, String loginId, String password, String nickname, Integer totalScore) {
 		this.username = username;
+		this.loginId = loginId;
 		this.password = password;
 		this.nickname = nickname;
+		this.totalScore = totalScore;
 	}
 }
