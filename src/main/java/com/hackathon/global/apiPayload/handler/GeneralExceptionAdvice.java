@@ -28,18 +28,14 @@ public class GeneralExceptionAdvice {
 
     // 그 외의 정의되지 않은 모든 예외 처리
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse<String>> handleException(
-            Exception ex
-    ) {
+    public ResponseEntity<ApiResponse<Void>> handleException(Exception ex) {
+        log.error("Unhandled exception occurred", ex);  // 서버 로그엔 상세히 남기고
 
         BaseErrorCode code = GeneralErrorCode.INTERNAL_SERVER_ERROR;
         return ResponseEntity.status(code.getStatus())
-                .body(ApiResponse.onFailure(
-                                code,
-                                ex.getMessage()
-                        )
-                );
+                .body(ApiResponse.onFailure(code, null));  // 클라이언트에는 일반 메시지만
     }
+
 
     // @Valid 어노테이션 검증 실패 예외
     @ExceptionHandler(MethodArgumentNotValidException.class)
