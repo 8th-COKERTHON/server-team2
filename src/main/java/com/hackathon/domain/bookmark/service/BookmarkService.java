@@ -60,13 +60,11 @@ public class BookmarkService {
 	public BookmarkReadDto.Response findAll(Long memberId) {
 		validateAuthenticatedMember(memberId);
 		List<Bookmark> bookmarks = bookmarkRepository.findOwnedActiveBookmarks(memberId);
-		List<Long> bookmarkIds = bookmarks.stream()
-				.map(Bookmark::getId)
-				.toList();
-		Map<Long, List<Checklist>> checklistsByBookmarkId = bookmarkIds.isEmpty()
-				? Map.of()
-				: checklistRepository.findByBookmark_IdInOrderByIdAsc(bookmarkIds).stream()
-						.collect(Collectors.groupingBy(checklist -> checklist.getBookmark().getId()));
+		Map<Long, List<Checklist>> checklistsByBookmarkId = bookmarks.stream()
+				.collect(Collectors.toMap(
+						Bookmark::getId,
+						bookmark -> checklistRepository.findByBookmarkId(bookmark.getId())
+				));
 
 		return BookmarkReadDto.Response.of(bookmarks.stream()
 				.map(bookmark -> BookmarkReadDto.BookmarkResponse.of(bookmark, checklistsByBookmarkId))
@@ -82,7 +80,7 @@ public class BookmarkService {
 			throw new CustomException(ErrorCode.FORBIDDEN_BOOKMARK_ACCESS);
 		}
 
-		List<Checklist> checklists = checklistRepository.findByBookmark_IdInOrderByIdAsc(List.of(bookmarkId));
+		List<Checklist> checklists = checklistRepository.findByBookmarkId(bookmarkId);
 		return BookmarkReadDto.DetailResponse.of(bookmark, checklists);
 	}
 
