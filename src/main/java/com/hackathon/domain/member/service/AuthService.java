@@ -29,7 +29,6 @@ public class AuthService {
 		}
 
 		Member member = Member.builder()
-				.username(request.loginId())
 				.loginId(request.loginId())
 				.password(passwordEncoder.encode(request.password()))
 				.nickname(request.nickname())
@@ -51,5 +50,12 @@ public class AuthService {
 		String refreshToken = jwtTokenProvider.createRefreshToken(member.getId());
 
 		return new TokenResponse(accessToken, refreshToken);
+	}
+
+	@Transactional
+	public void withdraw(Long memberId) {
+		Member member = memberRepository.findById(memberId)
+				.orElseThrow(() -> new ProjectException(GeneralErrorCode.MEMBER_NOT_FOUND));
+		memberRepository.delete(member);
 	}
 }

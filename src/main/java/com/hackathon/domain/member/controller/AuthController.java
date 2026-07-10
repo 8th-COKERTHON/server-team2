@@ -1,6 +1,7 @@
 package com.hackathon.domain.member.controller;
 
 import com.hackathon.domain.member.dto.AuthDto.LoginRequest;
+import com.hackathon.domain.member.dto.AuthDto.MemberInfoResponse;
 import com.hackathon.domain.member.dto.AuthDto.SignUpRequest;
 import com.hackathon.domain.member.dto.AuthDto.TokenResponse;
 import com.hackathon.domain.member.service.AuthService;
@@ -10,11 +11,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -36,5 +34,26 @@ public class AuthController {
 	public ApiResponse<TokenResponse> login(@Valid @RequestBody LoginRequest request) {
 		TokenResponse tokens = authService.login(request);
 		return ApiResponse.onSuccess(GeneralSuccessCode.OK, tokens);
+	}
+
+	@GetMapping("/me")
+	@Operation(summary = "내 정보 조회")
+	public ApiResponse<MemberInfoResponse> getMyInfo(Authentication authentication) {
+		Long memberId = (Long) authentication.getPrincipal();
+		return ApiResponse.onSuccess(GeneralSuccessCode.OK, authService.getMyInfo(memberId));
+	}
+
+	@PostMapping("/logout")
+	@Operation(summary = "로그아웃")
+	public ApiResponse<Void> logout() {
+		return ApiResponse.onSuccess(GeneralSuccessCode.OK, null);
+	}
+
+	@DeleteMapping("/withdraw")
+	@Operation(summary = "회원탈퇴")
+	public ApiResponse<Void> withdraw(Authentication authentication) {
+		Long memberId = (Long) authentication.getPrincipal();
+		authService.withdraw(memberId);
+		return ApiResponse.onSuccess(GeneralSuccessCode.OK, null);
 	}
 }
