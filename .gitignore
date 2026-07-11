@@ -24,3 +24,5 @@ application-secret.yml
 
 ### Mac ###
 .DS_Store
+
+application-local

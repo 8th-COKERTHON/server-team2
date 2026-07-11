@@ -7,6 +7,10 @@
     <list default="true" id="b95dc68f-1c56-4651-b003-9c4f45012c76" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/hackathon/domain/bookmark/service/BookmarkService.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/hackathon/domain/bookmark/service/BookmarkService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/hackathon/global/exception/ErrorCode.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/hackathon/global/exception/ErrorCode.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/resources/main/application-local.yml" beforeDir="false" afterPath="$PROJECT_DIR$/build/resources/main/application-local.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/hackathon/domain/bookmark/service/BookmarkService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/hackathon/domain/bookmark/service/BookmarkService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/hackathon/domain/score/service/ScoreService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/hackathon/domain/score/service/ScoreService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/application-local.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application-local.yml" afterDir="false" />
