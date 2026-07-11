@@ -3,7 +3,6 @@ package com.hackathon.domain.push.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hackathon.domain.notification.service.NotificationCreatedEvent;
-import com.hackathon.domain.push.config.PushVapidProperties;
 import com.hackathon.domain.push.entity.PushSubscription;
 import com.hackathon.domain.push.repository.PushSubscriptionRepository;
 import com.hackathon.domain.push.service.WebPushClient.WebPushSendResult;
@@ -24,18 +23,12 @@ import java.util.List;
 public class PushNotificationService {
 
 	private final PushSubscriptionRepository pushSubscriptionRepository;
-	private final PushVapidProperties pushVapidProperties;
 	private final WebPushClient webPushClient;
 	private final ObjectMapper objectMapper;
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	@TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
 	public void handleNotificationCreated(NotificationCreatedEvent event) {
-		if (!pushVapidProperties.isConfigured()) {
-			log.debug("Web Push is not configured. Skip push delivery.");
-			return;
-		}
-
 		List<PushSubscription> pushSubscriptions = pushSubscriptionRepository.findAllByMember_Id(event.memberId());
 		if (pushSubscriptions.isEmpty()) {
 			return;

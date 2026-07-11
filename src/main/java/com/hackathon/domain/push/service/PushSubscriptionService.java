@@ -2,7 +2,6 @@ package com.hackathon.domain.push.service;
 
 import com.hackathon.domain.member.entity.Member;
 import com.hackathon.domain.member.repository.MemberRepository;
-import com.hackathon.domain.push.config.PushVapidProperties;
 import com.hackathon.domain.push.dto.PushDto.SubscriptionDeleteRequest;
 import com.hackathon.domain.push.dto.PushDto.SubscriptionDeleteResponse;
 import com.hackathon.domain.push.dto.PushDto.SubscriptionRequest;
@@ -23,14 +22,13 @@ public class PushSubscriptionService {
 
 	private final PushSubscriptionRepository pushSubscriptionRepository;
 	private final MemberRepository memberRepository;
-	private final PushVapidProperties pushVapidProperties;
+	private final PushVapidKeyProvider pushVapidKeyProvider;
 
 	public VapidPublicKeyResponse getVapidPublicKey(Long memberId) {
 		requireMemberId(memberId);
 		validateMember(memberId);
-		validatePushConfigured();
 
-		return new VapidPublicKeyResponse(pushVapidProperties.publicKey());
+		return new VapidPublicKeyResponse(pushVapidKeyProvider.getPublicKey());
 	}
 
 	@Transactional
@@ -65,12 +63,6 @@ public class PushSubscriptionService {
 	private Member validateMember(Long memberId) {
 		return memberRepository.findById(memberId)
 				.orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
-	}
-
-	private void validatePushConfigured() {
-		if (!pushVapidProperties.isConfigured()) {
-			throw new CustomException(ErrorCode.PUSH_NOT_CONFIGURED);
-		}
 	}
 
 	private void requireMemberId(Long memberId) {

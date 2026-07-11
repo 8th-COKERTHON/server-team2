@@ -2,15 +2,12 @@ package com.hackathon.domain.push.service;
 
 import com.hackathon.domain.member.entity.Member;
 import com.hackathon.domain.member.repository.MemberRepository;
-import com.hackathon.domain.push.config.PushVapidProperties;
 import com.hackathon.domain.push.dto.PushDto.SubscriptionDeleteRequest;
 import com.hackathon.domain.push.dto.PushDto.SubscriptionRequest;
 import com.hackathon.domain.push.dto.PushDto.SubscriptionResponse;
 import com.hackathon.domain.push.dto.PushDto.VapidPublicKeyResponse;
 import com.hackathon.domain.push.entity.PushSubscription;
 import com.hackathon.domain.push.repository.PushSubscriptionRepository;
-import com.hackathon.global.exception.CustomException;
-import com.hackathon.global.exception.ErrorCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,13 +33,6 @@ class PushSubscriptionServiceTest {
 	@Mock
 	private MemberRepository memberRepository;
 
-	private final PushVapidProperties configuredProperties = new PushVapidProperties(
-			"public-key",
-			"private-key",
-			"mailto:test@example.com",
-			300
-	);
-
 	private PushSubscriptionService pushSubscriptionService;
 
 	@BeforeEach
@@ -50,7 +40,12 @@ class PushSubscriptionServiceTest {
 		pushSubscriptionService = new PushSubscriptionService(
 				pushSubscriptionRepository,
 				memberRepository,
-				configuredProperties
+				new PushVapidKeyProvider(new com.hackathon.domain.push.config.PushVapidProperties(
+						"public-key",
+						"private-key",
+						"mailto:test@example.com",
+						300
+				))
 		);
 	}
 
@@ -65,17 +60,17 @@ class PushSubscriptionServiceTest {
 	}
 
 	@Test
-	void getVapidPublicKeyThrowsWhenPushNotConfigured() {
+	void getVapidPublicKeyReturnsGeneratedKeyWhenEnvironmentIsMissing() {
 		PushSubscriptionService serviceWithoutConfig = new PushSubscriptionService(
 				pushSubscriptionRepository,
 				memberRepository,
-				new PushVapidProperties(null, null, null, 300)
+				new PushVapidKeyProvider(new com.hackathon.domain.push.config.PushVapidProperties(null, null, null, 300))
 		);
 		given(memberRepository.findById(1L)).willReturn(Optional.of(createMember(1L)));
 
-		assertThatThrownBy(() -> serviceWithoutConfig.getVapidPublicKey(1L))
-				.isInstanceOfSatisfying(CustomException.class,
-						exception -> assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.PUSH_NOT_CONFIGURED));
+		VapidPublicKeyResponse response = serviceWithoutConfig.getVapidPublicKey(1L);
+
+		assertThat(response.publicKey()).isNotBlank();
 	}
 
 	@Test
