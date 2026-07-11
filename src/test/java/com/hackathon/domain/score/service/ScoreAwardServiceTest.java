@@ -76,7 +76,7 @@ class ScoreAwardServiceTest {
 
 		scoreService.awardChecklistChecked(checklist);
 
-		assertThat(member.getTotalScore()).isEqualTo(54);
+		assertThat(member.getTotalScore()).isEqualTo(60);
 
 		ArgumentCaptor<ScoreHistory> scoreHistoryCaptor = ArgumentCaptor.forClass(ScoreHistory.class);
 		verify(scoreHistoryRepository, org.mockito.Mockito.times(3)).save(scoreHistoryCaptor.capture());
@@ -98,7 +98,7 @@ class ScoreAwardServiceTest {
 
 		scoreService.withdrawChecklistChecked(checklist);
 
-		assertThat(member.getTotalScore()).isEqualTo(-4);
+		assertThat(member.getTotalScore()).isEqualTo(-10);
 
 		ArgumentCaptor<ScoreHistory> scoreHistoryCaptor = ArgumentCaptor.forClass(ScoreHistory.class);
 		verify(scoreHistoryRepository).save(scoreHistoryCaptor.capture());
