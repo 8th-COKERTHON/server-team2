@@ -5,13 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b95dc68f-1c56-4651-b003-9c4f45012c76" name="변경" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/hackathon/domain/checklist/service/ChecklistService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/hackathon/domain/checklist/service/ChecklistService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/hackathon/domain/score/entity/ScoreActionType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/hackathon/domain/score/entity/ScoreActionType.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/hackathon/domain/score/service/ScoreService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/hackathon/domain/score/service/ScoreService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/hackathon/domain/checklist/service/ChecklistServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/hackathon/domain/checklist/service/ChecklistServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/hackathon/domain/score/service/ScoreAwardServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/hackathon/domain/score/service/ScoreAwardServiceTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application-local.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application-local.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
