@@ -3,7 +3,6 @@ package com.hackathon.domain.push.service;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.hackathon.domain.member.entity.Member;
 import com.hackathon.domain.notification.service.NotificationCreatedEvent;
-import com.hackathon.domain.push.config.PushVapidProperties;
 import com.hackathon.domain.push.entity.PushSubscription;
 import com.hackathon.domain.push.repository.PushSubscriptionRepository;
 import com.hackathon.domain.push.service.WebPushClient.WebPushSendResult;
@@ -33,17 +32,17 @@ class PushNotificationServiceTest {
 	private WebPushClient webPushClient;
 
 	@Test
-	void handleNotificationCreatedSkipsWhenPushNotConfigured() {
+	void handleNotificationCreatedDoesNothingWhenSubscriptionDoesNotExist() {
+		given(pushSubscriptionRepository.findAllByMember_Id(1L)).willReturn(List.of());
 		PushNotificationService pushNotificationService = new PushNotificationService(
 				pushSubscriptionRepository,
-				new PushVapidProperties(null, null, null, 300),
 				webPushClient,
 				JsonMapper.builder().findAndAddModules().build()
 		);
 
 		pushNotificationService.handleNotificationCreated(createEvent());
 
-		verifyNoInteractions(pushSubscriptionRepository);
+		verify(pushSubscriptionRepository).findAllByMember_Id(1L);
 		verifyNoInteractions(webPushClient);
 	}
 
@@ -55,7 +54,6 @@ class PushNotificationServiceTest {
 				.willReturn(new WebPushSendResult(201, null));
 		PushNotificationService pushNotificationService = new PushNotificationService(
 				pushSubscriptionRepository,
-				new PushVapidProperties("public-key", "private-key", "mailto:test@example.com", 300),
 				webPushClient,
 				JsonMapper.builder().findAndAddModules().build()
 		);
@@ -78,7 +76,6 @@ class PushNotificationServiceTest {
 				.willReturn(new WebPushSendResult(410, "expired"));
 		PushNotificationService pushNotificationService = new PushNotificationService(
 				pushSubscriptionRepository,
-				new PushVapidProperties("public-key", "private-key", "mailto:test@example.com", 300),
 				webPushClient,
 				JsonMapper.builder().findAndAddModules().build()
 		);

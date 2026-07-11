@@ -24,6 +24,7 @@ import java.util.concurrent.ExecutionException;
 public class WebPushDeliveryClient implements WebPushClient {
 
 	private final PushVapidProperties pushVapidProperties;
+	private final PushVapidKeyProvider pushVapidKeyProvider;
 	private volatile PushService pushService;
 
 	@Override
@@ -65,19 +66,15 @@ public class WebPushDeliveryClient implements WebPushClient {
 	}
 
 	private PushService createPushService() {
-		if (!pushVapidProperties.isConfigured()) {
-			throw new IllegalStateException("Web Push 설정이 완료되지 않았습니다.");
-		}
-
 		if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
 			Security.addProvider(new BouncyCastleProvider());
 		}
 
 		try {
 			return new PushService(
-					pushVapidProperties.publicKey(),
-					pushVapidProperties.privateKey(),
-					pushVapidProperties.subject()
+					pushVapidKeyProvider.getPublicKey(),
+					pushVapidKeyProvider.getPrivateKey(),
+					pushVapidKeyProvider.getSubject()
 			);
 		} catch (GeneralSecurityException exception) {
 			throw new IllegalStateException("Web Push 초기화에 실패했습니다.", exception);
