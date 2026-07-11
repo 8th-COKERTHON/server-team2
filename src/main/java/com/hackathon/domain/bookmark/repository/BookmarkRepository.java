@@ -27,6 +27,19 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
 			left join fetch b.tags
 			where b.memberId.id = :memberId
 				and b.isActive = true
+				and (
+					not exists (
+						select 1
+						from Checklist c
+						where c.bookmark = b
+					)
+					or exists (
+						select 1
+						from Checklist c
+						where c.bookmark = b
+							and c.checked = false
+					)
+				)
 			order by b.id desc
 			""")
 	List<Bookmark> findOwnedActiveBookmarks(@Param("memberId") Long memberId);
@@ -135,6 +148,19 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
 		left join fetch b.tags t
 		where b.memberId.id = :memberId
 			and b.isActive = true
+			and (
+				not exists (
+					select 1
+					from Checklist c
+					where c.bookmark = b
+				)
+				or exists (
+					select 1
+					from Checklist c
+					where c.bookmark = b
+						and c.checked = false
+				)
+			)
 			and exists (
 				select 1 from BookmarkTag bt
 				where bt.bookmark = b and bt.name = :tagName

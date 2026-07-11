@@ -53,17 +53,12 @@ public class ChecklistService {
 		checklist.toggleChecked();
 		if (!wasChecked && checklist.isChecked()) {
 			scoreService.awardChecklistChecked(checklist);
-			deactivateBookmarkIfAllChecklistsCompleted(checklist.getBookmark());
+		} else if (wasChecked && !checklist.isChecked()) {
+			scoreService.withdrawChecklistChecked(checklist);
 		}
 		checklistRepository.flush();
 
 		return ChecklistCheckResponse.from(checklist);
-	}
-
-	private void deactivateBookmarkIfAllChecklistsCompleted(Bookmark bookmark) {
-		if (!checklistRepository.existsByBookmark_IdAndCheckedFalse(bookmark.getId())) {
-			bookmark.delete();
-		}
 	}
 
 	private Bookmark getOwnedBookmark(Long bookmarkId, Long memberId) {

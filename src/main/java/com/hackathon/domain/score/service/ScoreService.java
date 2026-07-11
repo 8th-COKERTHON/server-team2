@@ -59,6 +59,10 @@ public class ScoreService {
 
 	@Transactional
 	public boolean awardReminderRevisit(Bookmark bookmark) {
+		if (notificationRepository.findTopByBookmark_IdOrderByCreatedAtDescIdDesc(bookmark.getId()).isEmpty()) {
+			return false;
+		}
+
 		return awardBookmarkAction(bookmark, ScoreActionType.REMINDER_REVISIT);
 	}
 
@@ -73,8 +77,17 @@ public class ScoreService {
 			return;
 		}
 
-		awardChecklistAction(checklist, ScoreActionType.CHECKLIST_ITEM_COMPLETED);
+		saveChecklistScoreHistory(checklist, ScoreActionType.CHECKLIST_ITEM_COMPLETED);
 		maybeAwardChecklistAllCompleted(checklist.getBookmark());
+	}
+
+	@Transactional
+	public void withdrawChecklistChecked(Checklist checklist) {
+		if (checklist.isChecked()) {
+			return;
+		}
+
+		saveChecklistScoreHistory(checklist, ScoreActionType.CHECKLIST_ITEM_UNCHECKED);
 	}
 
 	private void maybeAwardChecklistAllCompleted(Bookmark bookmark) {
@@ -108,18 +121,13 @@ public class ScoreService {
 		return true;
 	}
 
-	private boolean awardChecklistAction(Checklist checklist, ScoreActionType actionType) {
-		if (scoreHistoryRepository.existsByActionTypeAndChecklist_Id(actionType, checklist.getId())) {
-			return false;
-		}
-
+	private void saveChecklistScoreHistory(Checklist checklist, ScoreActionType actionType) {
 		saveScoreHistory(
 				checklist.getBookmark().getMemberId().getId(),
 				checklist.getBookmark().getId(),
 				checklist.getId(),
 				actionType
 		);
-		return true;
 	}
 
 	private void saveScoreHistory(

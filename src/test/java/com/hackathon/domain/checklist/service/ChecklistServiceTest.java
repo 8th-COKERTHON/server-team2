@@ -94,7 +94,6 @@ class ChecklistServiceTest {
 		LocalDateTime previousUpdatedAt = LocalDateTime.now().minusMinutes(1);
 		ReflectionTestUtils.setField(checklist, "updatedAt", previousUpdatedAt);
 		given(checklistRepository.findOwnedChecklist(15L, 3L, 1L)).willReturn(Optional.of(checklist));
-		given(checklistRepository.existsByBookmark_IdAndCheckedFalse(3L)).willReturn(true);
 		doAnswer(invocation -> {
 			ReflectionTestUtils.invokeMethod(checklist, "onUpdate");
 			return null;
@@ -110,26 +109,40 @@ class ChecklistServiceTest {
 	}
 
 	@Test
-	void toggleChecklistDeactivatesBookmarkWhenAllChecklistsAreCompleted() {
+	void toggleChecklistKeepsBookmarkActiveWhenAllChecklistsAreCompleted() {
 		Checklist checklist = createChecklist(15L, 3L, 1L, false);
 		given(checklistRepository.findOwnedChecklist(15L, 3L, 1L)).willReturn(Optional.of(checklist));
-		given(checklistRepository.existsByBookmark_IdAndCheckedFalse(3L)).willReturn(false);
 
 		checklistService.toggleChecklist(1L, 3L, 15L);
 
 		assertThat(checklist.isChecked()).isTrue();
-		assertThat(checklist.getBookmark().getIsActive()).isFalse();
+		assertThat(checklist.getBookmark().getIsActive()).isTrue();
 		verify(scoreService).awardChecklistChecked(checklist);
 	}
 
 	@Test
-	void toggleChecklistDoesNotAwardScoreWhenUnchecking() {
+	void toggleChecklistCanUncheckAfterCompletion() {
+		Checklist checklist = createChecklist(15L, 3L, 1L, false);
+		given(checklistRepository.findOwnedChecklist(15L, 3L, 1L)).willReturn(Optional.of(checklist));
+
+		checklistService.toggleChecklist(1L, 3L, 15L);
+		checklistService.toggleChecklist(1L, 3L, 15L);
+
+		assertThat(checklist.isChecked()).isFalse();
+		assertThat(checklist.getBookmark().getIsActive()).isTrue();
+		verify(scoreService).awardChecklistChecked(checklist);
+		verify(scoreService).withdrawChecklistChecked(checklist);
+	}
+
+	@Test
+	void toggleChecklistWithdrawsScoreWhenUnchecking() {
 		Checklist checklist = createChecklist(15L, 3L, 1L, true);
 		given(checklistRepository.findOwnedChecklist(15L, 3L, 1L)).willReturn(Optional.of(checklist));
 
 		checklistService.toggleChecklist(1L, 3L, 15L);
 
 		verify(scoreService, never()).awardChecklistChecked(checklist);
+		verify(scoreService).withdrawChecklistChecked(checklist);
 	}
 
 	@Test
