@@ -7,4 +7,5 @@ FROM eclipse-temurin:17-jre
 WORKDIR /app
 COPY --from=build /app/build/libs/*.jar app.jar
 ENV SPRING_PROFILES_ACTIVE=prod
+ENV TZ=Asia/Seoul
 ENTRYPOINT ["java", "-jar", "app.jar"]
