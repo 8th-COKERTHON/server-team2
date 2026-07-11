@@ -65,8 +65,6 @@ class ScoreAwardServiceTest {
 		Checklist checklist = createChecklist(100L, bookmark, true);
 		Notification notification = createNotification(1000L, bookmark, member, LocalDateTime.now().minusHours(1));
 
-		given(scoreHistoryRepository.existsByActionTypeAndChecklist_Id(ScoreActionType.CHECKLIST_ITEM_COMPLETED, 100L))
-				.willReturn(false);
 		given(checklistRepository.existsByBookmark_IdAndCheckedFalse(10L)).willReturn(false);
 		given(scoreHistoryRepository.existsByActionTypeAndBookmark_Id(ScoreActionType.CHECKLIST_ALL_COMPLETED, 10L))
 				.willReturn(false);
@@ -78,7 +76,7 @@ class ScoreAwardServiceTest {
 
 		scoreService.awardChecklistChecked(checklist);
 
-		assertThat(member.getTotalScore()).isEqualTo(60);
+		assertThat(member.getTotalScore()).isEqualTo(54);
 
 		ArgumentCaptor<ScoreHistory> scoreHistoryCaptor = ArgumentCaptor.forClass(ScoreHistory.class);
 		verify(scoreHistoryRepository, org.mockito.Mockito.times(3)).save(scoreHistoryCaptor.capture());
@@ -91,19 +89,20 @@ class ScoreAwardServiceTest {
 	}
 
 	@Test
-	void awardChecklistCheckedSkipsWhenChecklistWasAlreadyRewarded() {
+	void withdrawChecklistCheckedDeductsChecklistScore() {
 		Member member = createMember(1L, 0);
 		Bookmark bookmark = createBookmark(10L, member);
-		Checklist checklist = createChecklist(100L, bookmark, true);
+		Checklist checklist = createChecklist(100L, bookmark, false);
 
-		given(scoreHistoryRepository.existsByActionTypeAndChecklist_Id(ScoreActionType.CHECKLIST_ITEM_COMPLETED, 100L))
-				.willReturn(true);
-		given(checklistRepository.existsByBookmark_IdAndCheckedFalse(10L)).willReturn(true);
+		mockReferences(member, bookmark, checklist);
 
-		scoreService.awardChecklistChecked(checklist);
+		scoreService.withdrawChecklistChecked(checklist);
 
-		assertThat(member.getTotalScore()).isZero();
-		verify(scoreHistoryRepository, never()).save(org.mockito.ArgumentMatchers.any());
+		assertThat(member.getTotalScore()).isEqualTo(-4);
+
+		ArgumentCaptor<ScoreHistory> scoreHistoryCaptor = ArgumentCaptor.forClass(ScoreHistory.class);
+		verify(scoreHistoryRepository).save(scoreHistoryCaptor.capture());
+		assertThat(scoreHistoryCaptor.getValue().getActionType()).isEqualTo(ScoreActionType.CHECKLIST_ITEM_UNCHECKED);
 	}
 
 	@Test
@@ -113,6 +112,18 @@ class ScoreAwardServiceTest {
 		Checklist checklist = createChecklist(100L, bookmark, false);
 
 		scoreService.awardChecklistChecked(checklist);
+
+		assertThat(member.getTotalScore()).isZero();
+		verify(scoreHistoryRepository, never()).save(org.mockito.ArgumentMatchers.any());
+	}
+
+	@Test
+	void withdrawChecklistCheckedDoesNothingWhenStillChecked() {
+		Member member = createMember(1L, 0);
+		Bookmark bookmark = createBookmark(10L, member);
+		Checklist checklist = createChecklist(100L, bookmark, true);
+
+		scoreService.withdrawChecklistChecked(checklist);
 
 		assertThat(member.getTotalScore()).isZero();
 		verify(scoreHistoryRepository, never()).save(org.mockito.ArgumentMatchers.any());

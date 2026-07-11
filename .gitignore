@@ -18,9 +18,12 @@ out/
 ### Env ###
 .env
 application-secret.yml
+application-local.yml
 
 ### VS Code ###
-.vscode/y
+.vscode/
 
 ### Mac ###
 .DS_Store
+
+application-local
